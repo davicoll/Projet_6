@@ -3,9 +3,12 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+const userRoutes = require("./routes/user");
+//const sauceRoutes = require("./routes/sauces");
+
 mongoose
   .connect(
-    "mongodb+srv://Davicoll:cykablyat666@cluster-class.enkx2wj.mongodb.net/?retryWrites=true&w=majority",
+    "mongodb+srv://Davicoll:cykablyat666@cluster-class.enkx2wj.mongodb.net/projet6?retryWrites=true&w=majority",
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
@@ -25,5 +28,9 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
+app.use("/api/auth/", userRoutes);
+//app.use("/api/sauces/", sauceRoutes);
+//app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;
