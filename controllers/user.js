@@ -1,21 +1,36 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const emailValidator = require("email-validator");
 
 exports.signup = (req, res, next) => {
-  bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) => {
-      const user = new User({
-        email: req.body.email,
-        password: hash,
-      });
-      user
-        .save()
-        .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
-        .catch((error) => res.status(400).json({ error }));
-    })
-    .catch((error) => res.status(500).json({ error }));
+  if (emailValidator.validate(req.body.email)) {
+    const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6}$/;
+    if (regex.test(req.body.password)) {
+      bcrypt
+        .hash(req.body.password, 10)
+        .then((hash) => {
+          const user = new User({
+            email: req.body.email,
+            password: hash,
+          });
+          user
+            .save()
+            .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
+            .catch((error) => res.status(400).json({ error }));
+        })
+        .catch((error) => res.status(500).json({ error }));
+    } else {
+      res
+        .status(400)
+        .json({
+          message:
+            "Password must be at least 6 characters long and must contain at least one uppercase, one lowercase and one number",
+        });
+    }
+  } else {
+    res.status(400).json({ message: "Not a valid email" });
+  }
 };
 
 exports.login = (req, res, next) => {
