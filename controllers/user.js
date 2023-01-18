@@ -2,10 +2,11 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const emailValidator = require("email-validator");
+const dotenv = require("dotenv").config();
 
 exports.signup = (req, res, next) => {
   if (emailValidator.validate(req.body.email)) {
-    const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6}$/;
+    const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,15}$/;
     if (regex.test(req.body.password)) {
       bcrypt
         .hash(req.body.password, 10)
@@ -21,12 +22,10 @@ exports.signup = (req, res, next) => {
         })
         .catch((error) => res.status(500).json({ error }));
     } else {
-      res
-        .status(400)
-        .json({
-          message:
-            "Password must be at least 6 characters long and must contain at least one uppercase, one lowercase and one number",
-        });
+      res.status(400).json({
+        message:
+          "Password must be at least 6 and at most 15 characters long, and must contain at least one uppercase, one lowercase and one number",
+      });
     }
   } else {
     res.status(400).json({ message: "Not a valid email" });
@@ -51,7 +50,7 @@ exports.login = (req, res, next) => {
           }
           res.status(200).json({
             userId: user._id,
-            token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
+            token: jwt.sign({ userId: user._id }, process.env.TOKEN, {
               expiresIn: "24h",
             }),
           });

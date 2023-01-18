@@ -59,13 +59,12 @@ exports.updateSauce = (req, res, next) => {
       Sauce.updateOne(
         { _id: req.params.id },
         {
-          name: req.body.name,
-          manufacturer: req.body.manufacturer,
-          description: req.body.description,
-          mainPepper: req.body.mainPepper,
+          name: sauceObject.name,
+          manufacturer: sauceObject.manufacturer,
+          description: sauceObject.description,
+          mainPepper: sauceObject.mainPepper,
           imageUrl: sauceObject.imageUrl,
-          heat: req.body.heat,
-          _id: req.params.id,
+          heat: sauceObject.heat,
         }
       )
         .then(() => res.status(200).json({ message: "Objet modifié!" }))
@@ -87,6 +86,7 @@ exports.deleteSauce = (req, res, next) => {
           })
           .catch((error) => res.status(401).json({ error }));
       });
+      `images/${filename}`.deleteOne();
     })
     .catch((error) => {
       res.status(500).json({ error });
@@ -109,12 +109,12 @@ exports.likeSauce = (req, res, next) => {
         sauce.usersLiked.splice(indexL, 1);
       }
     }
-    sauce.likes = parseInt(sauce.usersLiked.length);
-    sauce.dislikes = parseInt(sauce.usersDisliked.length);
+    sauce.likes = sauce.usersLiked.length;
+    sauce.dislikes = sauce.usersDisliked.length;
     sauce
       .save()
       .then(() => {
-        res.status(201).json({ message: "like enregistré !" });
+        res.status(201).json({ message: "Enregistré !" });
       })
       .catch((error) => {
         res.status(400).json({ error });
