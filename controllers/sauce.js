@@ -3,8 +3,6 @@ const fs = require("fs");
 
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
-  delete sauceObject._id;
-  delete sauceObject._userId;
   const sauce = new Sauce({
     ...sauceObject,
     likes: 0,
@@ -53,7 +51,6 @@ exports.updateSauce = (req, res, next) => {
       }
     : { ...req.body };
 
-  delete sauceObject._userId;
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       Sauce.updateOne(
@@ -86,7 +83,6 @@ exports.deleteSauce = (req, res, next) => {
           })
           .catch((error) => res.status(401).json({ error }));
       });
-      `images/${filename}`.deleteOne();
     })
     .catch((error) => {
       res.status(500).json({ error });
