@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const dotenv = require("dotenv").config();
+const helmet = require("helmet");
 
 const app = express();
 
@@ -38,5 +39,5 @@ app.use(express.json());
 app.use("/api/auth", userRoutes);
 app.use("/api/sauces", sauceRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
-
+app.use(helmet());
 module.exports = app;

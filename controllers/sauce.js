@@ -1,8 +1,10 @@
 const Sauce = require("../models/sauces");
 const fs = require("fs");
+const mongoSanitize = require("mongo-sanitize");
 
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
+  mongoSanitize(sauceObject);
   const sauce = new Sauce({
     ...sauceObject,
     likes: 0,
@@ -53,6 +55,7 @@ exports.updateSauce = (req, res, next) => {
 
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
+      mongoSanitize(sauceObject);
       Sauce.updateOne(
         { _id: req.params.id },
         {
@@ -64,6 +67,7 @@ exports.updateSauce = (req, res, next) => {
           heat: sauceObject.heat,
         }
       )
+
         .then(() => res.status(200).json({ message: "Objet modifié!" }))
         .catch((error) => res.status(401).json({ error }));
     })
